@@ -1,7 +1,7 @@
 # 🐧 Remote Linux Lab (Segfault.net Playground)
 
-This project documents my hands-on practice with remote Linux servers using [Segfault.net](https://thc.org/segfault).  
-The goal: build **DevOps & SysAdmin fundamentals** by actually working as **root** on ephemeral cloud servers.
+Hands-on practice with remote Linux servers using [Segfault.net](https://thc.org/segfault).  
+The goal: build **DevOps & SysAdmin fundamentals** by actually working as **root** on ephemeral cloud servers—covering SSH access, live system monitoring, file transfers, and comfort with terminal editors.
 
 ---
 
@@ -90,9 +90,36 @@ remote-linux-lab/
 │
 ├── README.md                # Project documentation (this file)
 ├── hello.py                 # Demo Python script
+├── scripts/
+│   └── collect-system-info.sh  # Collects remote diagnostics into Markdown reports
 └── notes/
-    └── first-session.md     # Commands & learnings from first session
+    ├── first-session.md     # Commands & learnings from first session
+    └── reports/             # Generated system diagnostic reports
 ```
+
+---
+
+## 🛠️ Automation Reports
+
+Use the `collect-system-info.sh` helper to capture a snapshot of the remote host after each practice run:
+
+1. Ensure your SSH shortcut (e.g., `releasecoffee`) works without prompts.
+2. Run `./scripts/collect-system-info.sh` to gather uptime, resource usage, running services, and recent logs.
+3. Find the timestamped Markdown report under `notes/reports/`—perfect for diffing across sessions or sharing highlights.
+
+Pass a different SSH host alias or `user@host` as the first argument when you want to target another Segfault instance.
+
+---
+
+## 📘 Guides & Playbooks
+
+Deep dives that capture the core skills I'm practicing:
+
+- [SSH Access Playbook](docs/ssh-access.md) — shortcuts, key management, troubleshooting.
+- [System Monitoring Cheatsheet](docs/system-monitoring.md) — commands for CPU, memory, storage, network, services.
+- [File Transfer Recipes](docs/file-transfers.md) — `scp`, `rsync`, and `sftp` workflows.
+- [Editing on Remote Hosts](docs/editors.md) — nano/vim fundamentals and safety tips.
+- [DevOps Fundamentals Checklist](docs/devops-basics.md) — hygiene, automation, and documentation habits.
 
 ---
 
