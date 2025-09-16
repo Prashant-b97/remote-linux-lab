@@ -5,7 +5,7 @@ Segfault labs are great for practicing how files move between local and remote s
 ## Copy From Local to Remote
 
 ```bash
-scp ./hello.py releasecoffee:/sec/hello.py
+scp ./examples/hello.py releasecoffee:/sec/hello.py
 ```
 
 - `/sec` is the persistent encrypted storage; files in `/root` vanish after rebuilds.

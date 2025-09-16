@@ -89,7 +89,8 @@ This repo serves as both my study notes and a portfolio project showcasing pract
 remote-linux-lab/
 │
 ├── README.md                # Project documentation (this file)
-├── hello.py                 # Demo Python script
+├── examples/
+│   └── hello.py             # Demo Python script used for transfer exercises
 ├── scripts/
 │   └── collect-system-info.sh  # Collects remote diagnostics into Markdown reports
 └── notes/
