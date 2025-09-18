@@ -1,0 +1,29 @@
+# Example SSHD baseline for Segfault lab hosts.
+# Adjust ports/algorithms to match your desired hardened posture.
+
+Port 22
+Protocol 2
+AddressFamily any
+ListenAddress 0.0.0.0
+ListenAddress ::
+
+PermitRootLogin prohibit-password
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+PermitEmptyPasswords no
+AuthenticationMethods publickey
+
+UsePAM yes
+X11Forwarding no
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+GatewayPorts no
+
+ClientAliveInterval 300
+ClientAliveCountMax 2
+LoginGraceTime 30
+MaxAuthTries 3
+
+Subsystem sftp /usr/lib/openssh/sftp-server

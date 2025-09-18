@@ -1,47 +1,47 @@
 # Editing on Remote Hosts
 
-Practicing with both `nano` and `vim` builds confidence when working in constrained environments.
+Segfault sessions are a chance to stay fluent in both simple and modal editors. The tips below describe what each command does so you can explain the workflow to teammates or follow it as a newcomer.
 
-## Nano Quickstart
+## Nano: Quick Edits with Familiar Shortcuts
 
 ```bash
-nano /etc/motd
+nano -l /etc/motd
 ```
 
-Shortcuts to remember:
+- `-l` shows line numbers—a lifesaver when copying instructions from documentation.
+- `Ctrl+O` writes the current buffer, `Ctrl+X` exits, and `Ctrl+W` searches inside the file.
+- Use `Ctrl+K`/`Ctrl+U` to cut and uncut lines while refactoring configuration blocks.
+- Save interim copies such as `/etc/motd.bak` before large edits so you can roll back instantly.
 
-- `Ctrl+O` save buffer to disk.
-- `Ctrl+X` exit the editor.
-- `Ctrl+W` search inside the file.
-
-Use `nano -l` to show line numbers when editing configuration files.
-
-## Vim Essentials
+## Vim: Comfortable Once You Practise
 
 ```bash
 vim /sec/notes/journal.md
 ```
 
-Key commands:
+- `i` enters Insert mode, `Esc` returns to Normal mode.
+- `:w` saves your changes, `:q!` quits without saving, and `:wq` does both.
+- Search forward with `/pattern`, repeat with `n`, and go backwards with `N`.
+- Visual mode (`v`) lets you highlight blocks before copying or indentation adjustments.
 
-- `i` enter insert mode.
-- `Esc` return to normal mode.
-- `:wq` write and quit.
-- `:q!` quit without saving.
-- `/pattern` search forward, `n` to repeat.
-
-Enable syntax highlighting for configuration files by placing them under `/sec` and adding lines to `~/.vimrc`:
+### Personalising Vim Quickly
 
 ```bash
 cat >> ~/.vimrc <<'__EOF__'
-set number
-syntax on
-set expandtab shiftwidth=4
+set number                    " show line numbers
+syntax on                     " highlight config keywords
+set expandtab shiftwidth=4    " convert tabs to spaces for consistency
+set fileencodings=utf-8
 __EOF__
 ```
 
-## Remote Editing Tips
+- Appending to `~/.vimrc` makes every Segfault session feel more familiar without touching system files.
+- Keep the file under `/sec` if you want the settings to persist.
 
-- Always back up critical files before editing (`cp file file.bak`).
-- When editing services, reload or restart them and tail logs (`journalctl -f`).
-- Combine with `tmux` so you can resume sessions after network hiccups.
+## Shared Good Practices
+
+- Back up configuration files (`cp file file.bak`) before editing; if something breaks, restore quickly with `mv file.bak file`.
+- When changing service configs, restart or reload, then watch logs with `journalctl -f` or `tail -F` so you catch errors immediately.
+- Run editors inside `tmux` or `screen` sessions to survive flaky network connections.
+- Document tricky edits in `notes/` with the reasoning behind them—future you will thank present you.
+

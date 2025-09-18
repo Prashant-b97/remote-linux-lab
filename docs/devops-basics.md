@@ -1,32 +1,34 @@
 # DevOps Fundamentals Checklist
 
-This sandbox ties remote Linux practice into broader DevOps habits.
+Segfault practice is more than running commands—it is about building repeatable habits. These sections outline the routines I follow, phrased simply enough for onboarding notebooks yet detailed enough to satisfy audits.
 
 ## Infrastructure Hygiene
 
-- Maintain SSH keys, configs, and aliases under version control (but never the private key itself).
-- Document hostnames, credentials, and expiry dates in a secure manager.
-- Capture system state with `./scripts/collect-system-info.sh`.
+- Track every SSH alias and config snippet in version control, but keep private keys out of Git. A short README entry or `docs/ssh-access.md` update prevents drift.
+- Store hostnames, passwords, and expiry dates in a password manager so you can reset the lab quickly.
+- Capture a fresh snapshot with `./scripts/collect-system-info.sh` whenever you finish a session. The Markdown report becomes a time capsule of the environment.
 
 ## Configuration Management
 
-- Keep `/etc` edits in the repo via scratch copies (`scp root@segfault.net:/etc/ssh/sshd_config docs/examples/`).
-- Track diffs with `git diff` before applying changes.
-- Practice idempotent shell snippets for repeated setups (e.g., user creation, package installs).
+- Pull critical configs (for example `/etc/ssh/sshd_config`) down with `scp` before editing. Work locally, then push changes back once reviewed.
+- Run `git diff` on your scratch copies to highlight what changed and add context in commit messages or notes.
+- Turn one-off fixes into idempotent shell snippets. Re-running them should bring the host into the desired state without surprises.
 
 ## Observability
 
-- Standardize log reviews using `journalctl`, `tail -F`, and targeted filters.
-- Watch metrics over time with `sar` or `vmstat` if installed.
-- Record findings in `notes/` after each session for future reference.
+- Set a cadence: inspect `journalctl`, `tail -F /var/log/syslog`, or application logs before and after a change.
+- Learn lightweight tools like `vmstat`, `iostat`, and `ss`; they provide quick answers even on minimal installations.
+- Document anomalies in `notes/` so patterns emerge across sessions.
 
 ## Automation
 
-- Extend `scripts/` with repeatable tasks (backups, service restarts, log rotation).
-- Use cron or `systemd` timers on the remote host to schedule recurring maintenance in `/sec`.
+- Grow the `scripts/` directory with helpers for backups, log collection, or service restarts—small, well-commented scripts save time later.
+- When a task recurs, schedule it: use `cron` on simple boxes or `systemd` timers when they are available.
+- Add graceful error handling so automation fails loudly and leaves clues for future troubleshooting.
 
 ## Collaboration & Documentation
 
-- Summarize each lab in Markdown—including problem statements, hypotheses, and resolutions.
-- Link to relevant guides within `docs/` so future sessions build on past knowledge.
-- Share sanitized snippets in blog posts or internal wikis to reinforce learning.
+- Summarise each lab in Markdown: what problem you tackled, what commands you ran, and what you learned.
+- Link to supporting playbooks inside `docs/` so future readers can dive deeper without searching elsewhere.
+- Share sanitized snippets or diagrams with teammates. Teaching the workflow reinforces your own understanding and surfaces blind spots.
+

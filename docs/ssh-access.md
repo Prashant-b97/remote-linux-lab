@@ -1,24 +1,34 @@
 # SSH Access Playbook
 
-## Overview
+This guide keeps SSH setup clear enough for newcomers while staying precise for anyone reviewing the workflow. The goal: reach a Segfault lab host quickly, safely, and with minimal surprises.
 
-Segfault.net issues ephemeral root access, so fast and secure SSH setup matters. This guide captures the steps I follow each time I spin up a lab server.
-
-## Configure Local Shortcuts
+## 1. Prepare the Local Environment
 
 ```bash
 mkdir -p ~/.ssh
 chmod 700 ~/.ssh
+```
 
-# Store the private key provided by Segfault
+- `mkdir -p` creates the SSH directory if it does not exist; the `-p` flag prevents errors when the folder is already there.
+- `chmod 700` ensures only your user can read or modify the directory, which is a common security expectation on Linux and macOS.
+
+## 2. Store the Segfault Private Key
+
+```bash
 cat > ~/.ssh/id_sf-lsd-segfault-net <<'__KEY__'
 -----BEGIN OPENSSH PRIVATE KEY-----
 ...
 -----END OPENSSH PRIVATE KEY-----
 __KEY__
 chmod 600 ~/.ssh/id_sf-lsd-segfault-net
+```
 
-# Create a shortcut alias for faster logins
+- The here-document (`<<'__KEY__'`) captures the key without risking clipboard leaks.
+- `chmod 600` locks the file down to “read/write for me only,” which OpenSSH enforces.
+
+## 3. Create a Friendly Host Alias
+
+```bash
 cat >> ~/.ssh/config <<'__CONF__'
 Host releasecoffee
     HostName segfault.net
@@ -29,7 +39,11 @@ __CONF__
 chmod 600 ~/.ssh/config
 ```
 
-## Connect and Verify Identity
+- Aliases such as `releasecoffee` reduce typing and remove the need to remember passwords.
+- `IdentitiesOnly yes` tells SSH to use the key you specify instead of guessing through every key on disk.
+- Reset the file permissions to 600 so OpenSSH accepts the config file.
+
+## 4. Connect and Confirm Where You Landed
 
 ```bash
 ssh releasecoffee
@@ -38,15 +52,19 @@ hostname
 id
 ```
 
-## Hardening Tips
+- `whoami`, `hostname`, and `id` form a quick identity check—vital when juggling multiple shells.
+- Include `uptime` if you want to confirm whether the host rebooted between sessions.
 
-- Restrict private key permissions (`chmod 600`).
-- Disable host key checking only if the environment is fully disposable.
-- Rotate keys when the Segfault lab hands out replacements.
-- Keep the shortcut current—hostname aliases change as new boxes are launched.
+## 5. Keep the Workflow Hardened
 
-## Troubleshooting
+- Guard your private key; never commit it to Git or share screenshots that include it.
+- Turn off StrictHostKeyChecking only for short-lived hosts. Otherwise, leave host keys in place to detect man-in-the-middle attempts.
+- Rotate the key promptly if Segfault issues a new download or you suspect exposure.
+- Update the alias whenever Segfault renames the environment—the convenience only helps if the entry stays fresh.
 
-- `ssh -vv releasecoffee` reveals handshake problems.
-- Remove stale host fingerprints from `~/.ssh/known_hosts` if the box is rebuilt.
-- Ensure your local firewall permits outbound TCP/22.
+## 6. Troubleshoot with Confidence
+
+- Use `ssh -vv releasecoffee` to watch the handshake when authentication fails.
+- Remove stale fingerprints with `ssh-keygen -R segfault.net` if the host was rebuilt.
+- Confirm your local firewall allows outbound TCP/22 (or the port you set) when the connection hangs.
+- If latency is high, add `ControlMaster auto` and `ControlPersist 5m` blocks to `~/.ssh/config` so future sessions reuse the first connection.

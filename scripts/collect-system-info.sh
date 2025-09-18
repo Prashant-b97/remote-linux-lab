@@ -2,6 +2,16 @@
 # Generate a timestamped Markdown report of key system diagnostics from a remote Segfault host.
 set -euo pipefail
 
+TMP_SSHD_CONFIG=""
+
+cleanup() {
+  if [[ -n "$TMP_SSHD_CONFIG" && -f "$TMP_SSHD_CONFIG" ]]; then
+    rm -f "$TMP_SSHD_CONFIG"
+  fi
+}
+
+trap cleanup EXIT
+
 REMOTE_HOST="${1:-releasecoffee}"
 REPORT_DIR="${REPORT_BASE:-notes/reports}"
 TIMESTAMP="$(date -u +'%Y-%m-%dT%H-%M-%SZ')"
@@ -31,12 +41,12 @@ run_cmd() {
 }
 
 printf '# System Report: %s\n\n' "$(hostname)"
-printf '- Generated at (UTC): %s\n' "$(date -u +'%Y-%m-%d %H:%M:%SZ')"
-printf '- Kernel: %s\n' "$(uname -sr)"
+printf -- '- Generated at (UTC): %s\n' "$(date -u +'%Y-%m-%d %H:%M:%SZ')"
+printf -- '- Kernel: %s\n' "$(uname -sr)"
 if uptime -p >/dev/null 2>&1; then
-  printf '- Uptime: %s\n' "$(uptime -p)"
+  printf -- '- Uptime: %s\n' "$(uptime -p)"
 else
-  printf '- Uptime: %s\n' "$(uptime)"
+  printf -- '- Uptime: %s\n' "$(uptime)"
 fi
 
 section "Identity & Sessions"
@@ -68,6 +78,29 @@ elif command -v netstat >/dev/null 2>&1; then
   run_cmd "netstat -tulpn"
 fi
 
+section "Security Posture"
+if command -v sshd >/dev/null 2>&1; then
+  run_cmd "sshd -T | grep -E '^(permitrootlogin|passwordauthentication|challengeresponseauthentication)'"
+else
+  run_cmd "grep -Ei '^(PermitRootLogin|PasswordAuthentication|ChallengeResponseAuthentication)' /etc/ssh/sshd_config"
+fi
+if command -v ss >/dev/null 2>&1; then
+  run_cmd "ss -tulpn | awk 'NR==1 {print; next} !/(127\\.0\\.0\\.1|\\[::1\\])/ {print}'"
+fi
+if command -v ufw >/dev/null 2>&1; then
+  run_cmd "ufw status verbose"
+elif command -v firewall-cmd >/dev/null 2>&1; then
+  run_cmd "firewall-cmd --state"
+  run_cmd "firewall-cmd --list-all"
+elif command -v nft >/dev/null 2>&1; then
+  run_cmd "nft list ruleset 2>/dev/null || nft list tables 2>/dev/null || echo '# nft: unable to read ruleset'"
+elif command -v iptables >/dev/null 2>&1; then
+  run_cmd "iptables -S 2>/dev/null || echo '# iptables: unable to read ruleset'"
+fi
+if command -v fail2ban-client >/dev/null 2>&1; then
+  run_cmd "fail2ban-client status"
+fi
+
 if command -v systemctl >/dev/null 2>&1; then
   section "Running Services"
   run_cmd "systemctl list-units --type=service --state=running"
@@ -89,5 +122,30 @@ else
   fi
 fi
 REMOTE
+
+if [[ -n "${SSHD_BASELINE:-}" ]]; then
+  if [[ -f "$SSHD_BASELINE" ]]; then
+    TMP_SSHD_CONFIG="$(mktemp)"
+    if ssh "$REMOTE_HOST" 'cat /etc/ssh/sshd_config' >"$TMP_SSHD_CONFIG" 2>/dev/null; then
+      diff_output="$(diff -u "$SSHD_BASELINE" "$TMP_SSHD_CONFIG" || true)"
+      {
+        echo
+        echo '## SSHD Config Drift'
+        echo
+        if [[ -n "$diff_output" ]]; then
+          echo '```diff'
+          printf '%s\n' "$diff_output"
+          echo '```'
+        else
+          echo '_No differences versus baseline._'
+        fi
+      } >>"$REPORT_PATH"
+    else
+      echo "Unable to read /etc/ssh/sshd_config from $REMOTE_HOST" >&2
+    fi
+  else
+    echo "SSHD_BASELINE path '$SSHD_BASELINE' not found; skipping diff" >&2
+  fi
+fi
 
 echo "Saved report to $REPORT_PATH"
