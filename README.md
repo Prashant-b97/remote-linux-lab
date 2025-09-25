@@ -19,30 +19,30 @@ Remote Linux Lab is a portfolio-ready playbook for getting confident with day-to
 
 ```mermaid
 flowchart TD
-    developer["You"] -->|SSH practice| segfaultHost["Segfault host"]
-    developer -->|Automation scripts| segfaultHost
-    segfaultHost -->|collect-system-info.sh| markdownReports["notes/reports"]
-    segfaultHost -->|monitor.sh| metricsArtifacts["logs/*.json | logs/*.csv"]
-    markdownReports -->|Review & share| portfolio["Portfolio narrative"]
-    metricsArtifacts -->|Spot trends| portfolio
+    you["You"] -->|"SSH practice"| segfaultHost["Segfault host"]
+    you -->|"Automation scripts"| segfaultHost
+    segfaultHost -->|"collect-system-info.sh"| markdownReports["notes/reports"]
+    segfaultHost -->|"monitor.sh"| metricsArtifacts["logs/*.json\nlogs/*.csv"]
+    markdownReports -->|"Review & share"| portfolio["Portfolio narrative"]
+    metricsArtifacts -->|"Spot trends"| portfolio
 ```
 
 #### Environment layers at a glance
 
 ```mermaid
 graph TD
-  subgraph "Local Workstation"
+  subgraph "Local workstation"
     editor["IDE & CLI"]
-    container["Docker Lab Container"]
-    automation["CI Runner (GitHub Actions)"]
+    container["Docker<br/>lab container"]
+    automation["CI runner<br/>(GitHub Actions)"]
   end
-  subgraph "Practice Infrastructure"
+  subgraph "Practice infrastructure"
     segfault["Segfault.net host"]
-    vagrant["Optional Vagrant/Terraform VM"]
+    vagrant["Optional<br/>Vagrant/Terraform VM"]
   end
-  subgraph "Evidence Store"
+  subgraph "Evidence store"
     notes_repo["notes/reports"]
-    metrics_repo["logs/*.json | logs/*.csv"]
+    metrics_repo["logs/*.json<br/>logs/*.csv"]
     media_repo["docs/media"]
   end
 
