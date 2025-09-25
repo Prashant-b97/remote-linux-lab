@@ -1,0 +1,4 @@
+# Generated metric snapshots stay local
+logs/
+# Generated markdown reports
+notes/reports/

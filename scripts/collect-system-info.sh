@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 # Generate a timestamped Markdown report of key system diagnostics from a remote Segfault host.
+# Intended for junior engineers to run after a practice session so every action has written evidence.
 set -euo pipefail
 
+# Track the temporary file that stores sshd_config when we perform an optional diff.
 TMP_SSHD_CONFIG=""
 
+# Ensure any temporary files are removed even if the script exits early.
 cleanup() {
   if [[ -n "$TMP_SSHD_CONFIG" && -f "$TMP_SSHD_CONFIG" ]]; then
     rm -f "$TMP_SSHD_CONFIG"
@@ -19,13 +22,16 @@ REPORT_PATH="$REPORT_DIR/system-report-${REMOTE_HOST}-${TIMESTAMP}.md"
 
 mkdir -p "$REPORT_DIR"
 
+# Run a self-contained Bash program on the remote host and capture its Markdown output locally.
 ssh "$REMOTE_HOST" 'bash -s' <<'REMOTE' >"$REPORT_PATH"
 set -euo pipefail
 
+# Print a Markdown heading so each category is easy to skim later.
 section() {
   printf '\n## %s\n\n' "$1"
 }
 
+# Run a command, show the exact invocation, and capture non-zero exit codes inline.
 run_cmd() {
   local cmd="$1"
   echo '```bash'
@@ -40,6 +46,7 @@ run_cmd() {
   echo '```'
 }
 
+# Metadata banner sets the scene for recruiters reading the exported report.
 printf '# System Report: %s\n\n' "$(hostname)"
 printf -- '- Generated at (UTC): %s\n' "$(date -u +'%Y-%m-%d %H:%M:%SZ')"
 printf -- '- Kernel: %s\n' "$(uname -sr)"
@@ -106,6 +113,7 @@ if command -v systemctl >/dev/null 2>&1; then
   run_cmd "systemctl list-units --type=service --state=running"
 fi
 
+# Prefer journalctl when systemd is present; otherwise fall back to traditional logs.
 if command -v journalctl >/dev/null 2>&1; then
   section "Recent Journal"
   run_cmd "journalctl -n 50 --no-pager"
@@ -123,6 +131,7 @@ else
 fi
 REMOTE
 
+# Optionally append a config diff so readers see any SSH hardening drift in context.
 if [[ -n "${SSHD_BASELINE:-}" ]]; then
   if [[ -f "$SSHD_BASELINE" ]]; then
     TMP_SSHD_CONFIG="$(mktemp)"
