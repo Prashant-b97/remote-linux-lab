@@ -19,29 +19,30 @@ Remote Linux Lab is a portfolio-ready playbook for getting confident with day-to
 
 ```mermaid
 flowchart TD
-    Developer[(You)] -->|SSH practice & automation| RemoteHost[(Segfault Host)]
-    RemoteHost -->|collect-system-info.sh| MarkdownReports[(notes/reports/*.md)]
-    RemoteHost -->|monitor.sh| MetricsArtifacts[(logs/*.json\nlogs/*.csv)]
-    MarkdownReports -->|Review & share| Portfolio
-    MetricsArtifacts -->|Spot trends| Portfolio
+    developer["You"] -->|SSH practice| segfaultHost["Segfault host"]
+    developer -->|Automation scripts| segfaultHost
+    segfaultHost -->|collect-system-info.sh| markdownReports["notes/reports"]
+    segfaultHost -->|monitor.sh| metricsArtifacts["logs/*.json | logs/*.csv"]
+    markdownReports -->|Review & share| portfolio["Portfolio narrative"]
+    metricsArtifacts -->|Spot trends| portfolio
 ```
 
 #### Environment layers at a glance
 
 ```mermaid
 graph TD
-  subgraph Local_Workstation
+  subgraph "Local Workstation"
     editor["IDE & CLI"]
-    automation["CI Runner (GitHub Actions)"]
     container["Docker Lab Container"]
+    automation["CI Runner (GitHub Actions)"]
   end
-  subgraph Practice_Infrastructure
-    segfault["Segfault.net Host"]
+  subgraph "Practice Infrastructure"
+    segfault["Segfault.net host"]
     vagrant["Optional Vagrant/Terraform VM"]
   end
-  subgraph Evidence_Store
+  subgraph "Evidence Store"
     notes_repo["notes/reports"]
-    metrics_repo["logs/*.json|csv"]
+    metrics_repo["logs/*.json | logs/*.csv"]
     media_repo["docs/media"]
   end
 
