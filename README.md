@@ -56,9 +56,9 @@ graph TD
 
 #### Visual walkthrough (placeholders)
 
-- ![SSH Login Placeholder](docs/media/ssh-login-placeholder.png "Replace with SSH login screenshot")
-- ![Automation Run Placeholder](docs/media/collect-run-placeholder.gif "Replace with GIF of collect-system-info.sh")
-- ![Report Review Placeholder](docs/media/report-review-placeholder.png "Replace with generated Markdown report view")
+- **SSH login snapshot** — add `docs/media/ssh-login.png` once captured during a Segfault session.
+- **Automation run GIF** — record `collect-system-info.sh` in action and store it as `docs/media/collect-run.gif`.
+- **Report review screenshot** — drop a rendered Markdown report image at `docs/media/report-review.png`.
 
 ## Setup
 
