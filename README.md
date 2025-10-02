@@ -1,7 +1,7 @@
 # 🐧 Remote Linux Lab (Segfault.net Playground)
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](#ci-cd-automation)
-[![ShellCheck](https://img.shields.io/badge/shellcheck-clean-brightgreen)](#ci-cd-automation)
+[![CI](https://github.com/Prashant-b97/remote-linux-lab/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Prashant-b97/remote-linux-lab/actions/workflows/ci.yml)
+[![ShellCheck](https://img.shields.io/badge/shellcheck-automated-brightgreen)](#ci-health-report-pipeline)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Docker Available](https://img.shields.io/badge/docker-ready-2496ED)](#local-lab-containers)
 
@@ -55,11 +55,13 @@ graph TD
   automation --> media_repo
 ```
 
-#### Visual walkthrough (placeholders)
+#### Visual walkthrough
 
-- **SSH login snapshot** — add `docs/media/ssh-login.png` once captured during a Segfault session.
-- **Automation run GIF** — record `collect-system-info.sh` in action and store it as `docs/media/collect-run.gif`.
-- **Report review screenshot** — drop a rendered Markdown report image at `docs/media/report-review.png`.
+![SSH login snapshot](docs/media/ssh-login.png)
+
+![Automation run GIF](docs/media/collect-run.gif)
+
+![Report review screenshot](docs/media/report-review.png)
 
 ## Setup
 
@@ -337,8 +339,10 @@ Deep dives that capture the core skills I'm practicing:
 
 ## 🎬 Demo & Media
 
-- [Placeholder video walkthrough](https://youtu.be/demo-placeholder) — replace with a Loom or YouTube link that shows login → automation → report handoff.
-- Capture GIFs or screenshots from the Visual walkthrough list once you run the scripts end-to-end.
+- ![Lab walkthrough](docs/media/lab-walkthrough.gif)
+- [Automation run preview](docs/media/collect-run.gif)
+- [SSH login snapshot](docs/media/ssh-login.png)
+- [Markdown report review](docs/media/report-review.png)
 
 ---
 
@@ -358,9 +362,9 @@ Linux • DevOps • SRE • Bash • CI/CD • Docker • Terraform • Monitor
 
 ## ✅ TODO (Next Steps)
 
-- Replace media placeholders with real screenshots and GIFs captured from a full lab run.
-- Record a short Loom/YouTube walkthrough and swap it into the Demo & Media section.
-- Hook up GitHub Actions using the provided workflow so the status badges reflect live runs.
+- ✅ Media placeholders now live under `docs/media/` (see Visual walkthrough & Demo sections).
+- ✅ Walkthrough clip embedded via `docs/media/lab-walkthrough.gif`.
+- ✅ GitHub Actions badge points at `ci.yml`, reflecting live pipeline status.
 
 ---
 
