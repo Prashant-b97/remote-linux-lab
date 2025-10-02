@@ -1,0 +1,14 @@
+public_key_path   = "~/.ssh/id_ed25519.pub"
+allowed_ssh_cidrs = ["203.0.113.0/24"]
+
+tags = {
+  project     = "remote-linux-lab"
+  owner       = "your-name"
+  environment = "lab"
+}
+
+# Optional overrides
+# instance_type = "t3.small"
+# ami_id        = "ami-1234567890abcdef0"
+# vpc_cidr      = "10.50.0.0/16"
+# subnet_cidr   = "10.50.1.0/24"

@@ -1,0 +1,38 @@
+name: Remote Linux Lab CI
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  lint-and-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: ShellCheck scripts
+        run: shellcheck scripts/*.sh
+
+      - name: Generate system health report
+        run: ./scripts/system-health-report.sh
+
+      - name: Upload health artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-health-report
+          path: |
+            logs/system-health-report-*.md
+            logs/system-metrics-*.json
+          if-no-files-found: error

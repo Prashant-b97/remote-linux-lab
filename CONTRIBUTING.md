@@ -8,6 +8,7 @@ Thanks for helping shape Remote Linux Lab. This project doubles as a portfolio a
 2. Run `shellcheck scripts/*.sh` locally before opening a pull request.
 3. Execute any touched scripts with `--help` to ensure usage text and exit codes read well.
 4. Capture a sample report or metric artifact and attach it to the PR if your change affects output.
+5. If you modify automation, run `./scripts/system-health-report.sh` so CI emits the expected artifact bundle.
 
 ## Commit Style
 
@@ -31,6 +32,14 @@ Thanks for helping shape Remote Linux Lab. This project doubles as a portfolio a
 - Bash should target POSIX where possible but may rely on Bash 5 features when they improve readability.
 - Comment only where intent is non-obvious; prefer concise docstrings at the top of scripts.
 - Default to markdown outputs for reports so recruiters can skim them without tooling.
+
+## Automation Surfaces
+
+- **Docker / Vagrant parity** — keep package lists between `Dockerfile` and `Vagrantfile` aligned so demos feel identical.
+- **Terraform lab** — run `terraform fmt` before committing and update `infra/terraform/README.md` if inputs or outputs change.
+- **CI pipeline** — adjust `.github/workflows/ci.yml` alongside any new scripts so the health report stays relevant.
+- **Monitoring demo** — document Prometheus/Grafana tweaks in `docs/monitoring-demo.md` and prefer config checked into `monitoring/`.
+- **SSH checks** — update both `scripts/check-ssh-hardening.sh` (local) and `scripts/ssh-audit.sh` (remote) when adding new guardrails.
 
 ## Documentation Standards
 

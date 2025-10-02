@@ -75,6 +75,68 @@ graph TD
 4. **Review generated artifacts**
    - Markdown reports land under `notes/reports/`.
    - Structured metrics land under `logs/`.
+   - Browse `docs/artifacts/system-health-report-sample.md` for a redacted example you can share publicly.
+
+## Automation Toolkit
+
+### Local lab container
+
+```
+docker build -t remote-linux-lab .
+docker run --rm -it -v "$PWD":/workspace remote-linux-lab
+```
+
+The image bundles the same tooling the scripts expect (Bash 5, `jq`, `ssh`, `tmux`, etc.) and drops you into `/workspace`, which syncs with your host checkout. Use it for repeatable demos on any machine with Docker.
+
+### Vagrant quickstart
+
+```
+vagrant up
+vagrant ssh
+```
+
+The `Vagrantfile` provisions Ubuntu 22.04 with identical packages to the container. Port 2222 forwards SSH so you can rehearse `scp` workflows against the VM.
+
+### Terraform remote lab
+
+```
+cd infra/terraform
+cp terraform.tfvars.example terraform.tfvars
+# edit terraform.tfvars with your SSH key path, CIDR limits, and tags
+terraform init
+terraform apply
+```
+
+This creates a disposable AWS lab (VPC + EC2) that mirrors the Docker/Vagrant tooling. Terraform outputs a ready-to-run SSH command when the instance is live.
+
+### Monitoring dashboard demo
+
+Use `monitoring/docker-compose.yml` to spin up Prometheus, Node Exporter, and Grafana locally:
+
+```
+cd monitoring
+docker compose up -d
+```
+
+Head over to [docs/monitoring-demo.md](docs/monitoring-demo.md) for Grafana setup steps and tips on capturing `htop` snapshots.
+
+### Compare health snapshots
+
+Use the new diff helper to compare two metric captures:
+
+```
+./scripts/compare-metrics.sh logs/system-metrics-<earlier>.json logs/system-metrics-<latest>.json
+```
+
+It outputs average/max CPU, memory, and disk usage deltas so you can talk through trend analysis during reviews.
+
+### CI health report pipeline
+
+Pushing to `main` (or opening a PR) runs `.github/workflows/ci.yml`. The workflow:
+
+- Installs ShellCheck and lints every script.
+- Executes `./scripts/system-health-report.sh`, which wraps `monitor.sh` to capture fresh metrics.
+- Publishes the markdown report and JSON metrics as build artifacts for your portfolio.
 
 ## Use Cases
 
@@ -88,6 +150,7 @@ graph TD
 ## 🚀 Skills in Focus
 
 - **SSH Hygiene** — logging in securely, managing identity files, and using friendly host aliases.
+- **Security Posture Automation** — run `./scripts/check-ssh-hardening.sh` locally or `ssh-audit.sh` remotely to prove password logins stay disabled.
 - **System Awareness** — checking quotas, uptime, and hardware limits so surprises are caught early.
 - **File Operations** — editing configuration files in `nano` and `vim`, and moving artifacts with `scp` or `sftp`.
 - **Session Reliability** — keeping work alive with `tmux` and understanding background execution with `nohup`.
@@ -138,9 +201,11 @@ remote-linux-lab/
 │   ├── hello.py             # Demo Python script used for transfer exercises
 │   └── sshd_config.baseline # Sanitized SSH baseline for drift detection
 ├── scripts/
-│   ├── collect-system-info.sh  # Collects remote diagnostics into Markdown reports
-│   ├── monitor.sh              # Exports CPU/memory/disk usage in JSON or CSV
-│   └── ssh-audit.sh            # Checks SSH settings against guardrails
+│   ├── collect-system-info.sh   # Collects remote diagnostics into Markdown reports
+│   ├── monitor.sh               # Exports CPU/memory/disk usage in JSON or CSV
+│   ├── ssh-audit.sh             # Checks SSH settings against guardrails
+│   ├── system-health-report.sh  # Wraps monitor.sh and service checks for CI artifacts
+│   └── compare-metrics.sh       # Diffs two JSON snapshots to highlight drifts
 └── notes/
     ├── first-session.md     # Narrative recap of the initial sandbox session
     ├── 2025-09-18.md        # Security-focused session notes with baseline guidance
@@ -192,6 +257,7 @@ Pass a different SSH host alias or `user@host` as the first argument when you wa
 - `./scripts/monitor.sh --format json --count 3` exports newline-delimited snapshots ready for dashboards.
 - `./scripts/monitor.sh --format csv --count 10 --interval 30` appends spreadsheet-friendly rows for trend tracking.
 - Outputs default to `logs/`, so reviewers can skim real data without running the tooling themselves.
+- Diff two captures with `./scripts/compare-metrics.sh <baseline.json> <latest.json>` to highlight CPU/memory/disk drift in seconds.
 
 ### Security automation (SSH audit)
 
