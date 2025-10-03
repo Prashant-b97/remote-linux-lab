@@ -18,29 +18,34 @@ Remote Linux Lab is a portfolio-ready playbook for getting confident with day-to
 ### How the pieces connect
 
 ```mermaid
+%%{init: {'flowchart': {'htmlLabels': true, 'curve': 'basis'}, 'themeVariables': { 'fontSize': '12px' }}}%%
 flowchart TD
-    you["You"] -->|"SSH practice"| segfaultHost["Segfault host"]
-    you -->|"Automation scripts"| segfaultHost
-    segfaultHost -->|"collect-system-info.sh"| markdownReports["notes/reports"]
-    segfaultHost -->|"monitor.sh"| metricsArtifacts["logs/*.json\nlogs/*.csv"]
-    markdownReports -->|"Review & share"| portfolio["Portfolio narrative"]
-    metricsArtifacts -->|"Spot trends"| portfolio
+  you["You"] -->|"SSH practice"| segfaultHost["Segfault host"]
+  you -->|"Automation scripts"| segfaultHost
+  segfaultHost -->|"collect-system-info.sh"| markdownReports["notes/reports"]
+  segfaultHost -->|"monitor.sh"| metricsArtifacts["logs/*.json<br/>logs/*.csv"]
+  markdownReports -->|"Review & share"| portfolio["Portfolio narrative"]
+  metricsArtifacts -->|"Spot trends"| portfolio
 ```
+
 
 #### Environment layers at a glance
 
 ```mermaid
-graph TD
-  subgraph "Local workstation"
+%%{init: {'flowchart': {'htmlLabels': true, 'curve': 'basis'}, 'themeVariables': { 'fontSize': '12px' }}}%%
+flowchart LR
+  subgraph Local_workstation
     editor["IDE & CLI"]
     container["Docker<br/>lab container"]
     automation["CI runner<br/>(GitHub Actions)"]
   end
-  subgraph "Practice infrastructure"
+
+  subgraph Practice_infrastructure
     segfault["Segfault.net host"]
     vagrant["Optional<br/>Vagrant/Terraform VM"]
   end
-  subgraph "Evidence store"
+
+  subgraph Evidence_store
     notes_repo["notes/reports"]
     metrics_repo["logs/*.json<br/>logs/*.csv"]
     media_repo["docs/media"]
@@ -357,14 +362,6 @@ Deep dives that capture the core skills I'm practicing:
 ## 🏁 Skills
 
 Linux • DevOps • SRE • Bash • CI/CD • Docker • Terraform • Monitoring
-
----
-
-## ✅ TODO (Next Steps)
-
-- ✅ Media placeholders now live under `docs/media/` (see Visual walkthrough & Demo sections).
-- ✅ Walkthrough clip embedded via `docs/media/lab-walkthrough.gif`.
-- ✅ GitHub Actions badge points at `ci.yml`, reflecting live pipeline status.
 
 ---
 
