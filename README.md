@@ -344,10 +344,11 @@ Deep dives that capture the core skills I'm practicing:
 
 ## 🎬 Demo & Media
 
-- ![Lab walkthrough](docs/media/lab-walkthrough.gif)
-- [Automation run preview](docs/media/collect-run.gif)
-- [SSH login snapshot](docs/media/ssh-login.png)
-- [Markdown report review](docs/media/report-review.png)
+![Lab walkthrough](docs/media/lab-walkthrough.gif)
+
+- ![Automation run preview](docs/media/collect-run.gif)
+- ![SSH login snapshot](docs/media/ssh-login.png)
+- ![Markdown report review](docs/media/report-review.png)
 
 ---
 
