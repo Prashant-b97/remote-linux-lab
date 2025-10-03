@@ -344,16 +344,17 @@ Deep dives that capture the core skills I'm practicing:
 
 ## 🎬 Demo & Media
 
-- ![Lab walkthrough](docs/media/lab-walkthrough.gif)
+![Lab walkthrough](docs/media/lab-walkthrough.gif)
+*Lab walkthrough — SSH login, automation run, and report preview in one clip.*
 
+![Automation run preview](docs/media/collect-run.gif)
+*Automation run preview — `collect-system-info.sh` in action.*
 
-- [Automation run preview](docs/media/collect-run.gif)
+![SSH login snapshot](docs/media/ssh-login.png)
+*SSH login snapshot — sanitized terminal view after connecting to Segfault.*
 
-
-- [SSH login snapshot](docs/media/ssh-login.png)
-
-
-- [Markdown report review](docs/media/report-review.png)
+![Markdown report review](docs/media/report-review.png)
+*Markdown report review — generated system-health report open in VS Code.*
 
 ---
 
