@@ -9,13 +9,41 @@ LOG_DIR="${REPORT_BASE:-$REPO_ROOT/logs}"
 TIMESTAMP="$(date -u +'%Y-%m-%dT%H-%M-%SZ')"
 REPORT_PATH="$LOG_DIR/system-health-report-$TIMESTAMP.md"
 METRICS_PATH="$LOG_DIR/system-metrics-$TIMESTAMP.json"
-METRICS_BASENAME="$(basename "$METRICS_PATH")"
 REPORT_BASENAME="$(basename "$REPORT_PATH")"
 
 mkdir -p "$LOG_DIR"
 
 # Capture a short burst of metrics using the existing monitoring scaffold.
-"$SCRIPT_DIR/monitor.sh" --format json --interval 2 --count 5 --output "$METRICS_PATH"
+set +e
+MONITOR_OUTPUT=$("$SCRIPT_DIR/monitor.sh" --format json --interval 2 --count 5 --output "$METRICS_PATH" 2>&1)
+MONITOR_EXIT=$?
+set -e
+printf '%s\n' "$MONITOR_OUTPUT"
+
+if (( MONITOR_EXIT == 0 )) && [[ -f "$METRICS_PATH" ]]; then
+  METRICS_BASENAME="$(basename "$METRICS_PATH")"
+  METRICS_VALUE="\`$METRICS_BASENAME\`"
+  METRICS_DESC="The file \`$METRICS_BASENAME\` contains five samples captured via \`monitor.sh\`."
+  QUICK_PEEK_SECTION=$(cat <<EOF
+### Quick Peek
+
+Run the following to inspect locally:
+
+\`\`\`bash
+jq '.' "$METRICS_PATH"
+\`\`\`
+EOF
+)
+else
+  METRICS_BASENAME=""
+  METRICS_VALUE="_Unavailable (monitor.sh exit $MONITOR_EXIT)_"
+  METRICS_DESC="_Metrics capture failed in this environment (exit $MONITOR_EXIT); rerun locally to generate samples._"
+  if [[ -n "$MONITOR_OUTPUT" ]]; then
+    printf -v METRICS_DESC "%s\n\n\`\`\`\n%s\n\`\`\`\n" "$METRICS_DESC" "$MONITOR_OUTPUT"
+  fi
+  QUICK_PEEK_SECTION=$'### Quick Peek\n\n_Metrics capture unavailable in this environment; rerun locally to inspect JSON output._\n'
+  METRICS_PATH=""
+fi
 
 HOSTNAME="$(hostname)"
 KERNEL="$(uname -sr)"
@@ -62,19 +90,13 @@ fi
 - Disk usage (/): $DISK_USAGE
 - Memory usage: ${MEMORY_SUMMARY:-use the \`free -h\` command on this host}
 - Load average: ${LOAD_AVG:-unavailable}
-- Metrics sample: \`$METRICS_BASENAME\`
+- Metrics sample: $METRICS_VALUE
 
 ## Recent Metrics (JSON)
 
-The file \`$METRICS_BASENAME\` contains five samples captured via \`monitor.sh\`.
+$METRICS_DESC
 
-### Quick Peek
-
-Run the following to inspect locally:
-
-\`\`\`bash
-jq '.' "$METRICS_PATH"
-\`\`\`
+$QUICK_PEEK_SECTION
 
 ## Service Checks
 
