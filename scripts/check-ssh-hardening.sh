@@ -88,8 +88,6 @@ check_setting() {
   fi
 }
 
-additional_comments=()
-
 weak_macs() {
   normalise "$CONFIG_PATH" | awk 'tolower($1)=="macs" {print tolower($2)}'
 }
@@ -127,14 +125,14 @@ check_setting AllowAgentForwarding no info "Agent forwarding should only be enab
 macs="$(weak_macs)"
 if [[ -n "$macs" && "$macs" =~ (hmac-md5|hmac-sha1) ]]; then
   echo
-  echo 'WARNING: Weak MAC detected (`hmac-md5`/`hmac-sha1`). Prefer modern algorithms such as `hmac-sha2-256`.'
+  echo "WARNING: Weak MAC detected (\`hmac-md5\`/\`hmac-sha1\`). Prefer modern algorithms such as \`hmac-sha2-256\`."
   ((failures++))
 fi
 
 kex="$(legacy_kex)"
 if [[ -n "$kex" && "$kex" =~ (diffie-hellman-group1-sha1|diffie-hellman-group14-sha1) ]]; then
   echo
-  echo 'WARNING: Legacy key exchange detected. Rotate to `curve25519-sha256` or stronger ecdh variants.'
+  echo "WARNING: Legacy key exchange detected. Rotate to \`curve25519-sha256\` or stronger ecdh variants."
   ((failures++))
 fi
 

@@ -9,6 +9,8 @@ LOG_DIR="${REPORT_BASE:-$REPO_ROOT/logs}"
 TIMESTAMP="$(date -u +'%Y-%m-%dT%H-%M-%SZ')"
 REPORT_PATH="$LOG_DIR/system-health-report-$TIMESTAMP.md"
 METRICS_PATH="$LOG_DIR/system-metrics-$TIMESTAMP.json"
+METRICS_BASENAME="$(basename "$METRICS_PATH")"
+REPORT_BASENAME="$(basename "$REPORT_PATH")"
 
 mkdir -p "$LOG_DIR"
 
@@ -60,11 +62,11 @@ fi
 - Disk usage (/): $DISK_USAGE
 - Memory usage: ${MEMORY_SUMMARY:-use the \`free -h\` command on this host}
 - Load average: ${LOAD_AVG:-unavailable}
-- Metrics sample: \`$(basename "$METRICS_PATH")\`
+- Metrics sample: \`$METRICS_BASENAME\`
 
 ## Recent Metrics (JSON)
 
-The file \`$(basename "$METRICS_PATH")\` contains five samples captured via \`monitor.sh\`.
+The file \`$METRICS_BASENAME\` contains five samples captured via \`monitor.sh\`.
 
 ### Quick Peek
 
@@ -80,14 +82,18 @@ $SERVICE_HEADING
 
 EOF
 
-  printf '```bash\n%s\n```\n\n' "${SERVICE_OUTPUT:-Unavailable}" 2>/dev/null
+  printf '%s\n' "\`\`\`bash"
+  printf '%s\n' "${SERVICE_OUTPUT:-Unavailable}"
+  printf '%s\n\n' "\`\`\`"
   printf '%s\n\n' "$SOCKET_HEADING"
-  printf '```bash\n%s\n```\n\n' "${SOCKET_OUTPUT:-Unavailable}" 2>/dev/null
+  printf '%s\n' "\`\`\`bash"
+  printf '%s\n' "${SOCKET_OUTPUT:-Unavailable}"
+  printf '%s\n\n' "\`\`\`"
 
   cat <<EOF
 ## Recommended Next Steps
 
-1. Ship \`$(basename "$REPORT_PATH")\` as a CI artifact for portfolio evidence.
+1. Ship \`$REPORT_BASENAME\` as a CI artifact for portfolio evidence.
 2. Compare load/memory snapshots over time to identify drift.
 3. Extend this script with service checks relevant to your stack.
 EOF

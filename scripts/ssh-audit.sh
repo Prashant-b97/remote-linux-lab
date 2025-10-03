@@ -38,13 +38,13 @@ analyse_flag() {
   local actual
   actual=$(echo "$sshd_dump" | awk -v key="$key" '$1==key {print $2; exit}')
   if [[ -z "$actual" ]]; then
-    printf '| `%s` | not set | info | Inherits vendor default; verify manually. |\n' "$key"
+    printf "| \`%s\` | not set | info | Inherits vendor default; verify manually. |\\n" "$key"
     return
   fi
   if [[ "$actual" == "$expected" ]]; then
-    printf '| `%s` | %s | pass | Matches guardrail. |\n' "$key" "$actual"
+    printf "| \`%s\` | %s | pass | Matches guardrail. |\\n" "$key" "$actual"
   else
-    printf '| `%s` | %s | %s | %s |\n' "$key" "$actual" "$severity" "$rationale"
+    printf "| \`%s\` | %s | %s | %s |\\n" "$key" "$actual" "$severity" "$rationale"
   fi
 }
 
@@ -72,19 +72,19 @@ weak_kex() {
   echo
   kex="$(weak_kex)"
   if [[ -z "$kex" ]]; then
-    echo '_No custom key exchange list detected; host relies on defaults._'
+    echo "_No custom key exchange list detected; host relies on defaults._"
   elif echo "$kex" | grep -qi 'diffie-hellman-group1-sha1'; then
-    echo '⚠️ Weak algorithm detected (`diffie-hellman-group1-sha1`). Rotate to modern curves (e.g., curve25519).'
+    echo "⚠️ Weak algorithm detected (\`diffie-hellman-group1-sha1\`). Rotate to modern curves (e.g., curve25519)."
   else
-    echo 'Configured algorithms:'
+    echo "Configured algorithms:"
     printf '%s\n' "$kex"
   fi
   echo
   echo "## Remediation Checklist"
   echo
-  echo '- Update `examples/sshd_config.baseline` with approved values.'
-  echo '- Re-run `collect-system-info.sh` with `SSHD_BASELINE` to capture before/after diffs.'
-  echo '- Document any accepted risks in `notes/` with justification for auditors.'
+  echo "- Update \`examples/sshd_config.baseline\` with approved values."
+  echo "- Re-run \`collect-system-info.sh\` with \`SSHD_BASELINE\` to capture before/after diffs."
+  echo "- Document any accepted risks in \`notes/\` with justification for auditors."
 } >"$AUDIT_PATH"
 
 echo "Saved audit to $AUDIT_PATH"

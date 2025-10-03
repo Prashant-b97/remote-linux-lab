@@ -120,8 +120,8 @@ parse_args() {
 
 read_cpu_snapshot() {
   [[ -r /proc/stat ]] || die "/proc/stat not available; CPU metrics require a Linux-style /proc filesystem"
-  local user nice system idle iowait irq softirq steal guest guest_nice
-  read -r _ user nice system idle iowait irq softirq steal guest guest_nice < /proc/stat
+  local user nice system idle iowait irq softirq steal
+  read -r _ user nice system idle iowait irq softirq steal _ _ < /proc/stat
   local idle_all=$((idle + iowait))
   local non_idle=$((user + nice + system + irq + softirq + steal))
   local total=$((idle_all + non_idle))
@@ -359,7 +359,7 @@ write_header_if_needed() {
 main() {
   parse_args "$@"
 
-  local timestamp token
+  local timestamp
   timestamp="$(date -u +%Y%m%d-%H%M%S)"
   if [[ -z "$OUTPUT" ]]; then
     mkdir -p logs
